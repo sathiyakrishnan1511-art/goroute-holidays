@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoRoute Holidays | Operations Admin Dashboard</title>
+    
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        :root {
+            --dark-bg: #030712;      /* Midnight Black */
+            --dark-card: #0f172a;    /* Deep Slate Blue */
+            --electric-blue: #00e5ff; /* Peacock Blue Accent */
+            --accent-red: #ff4d24;    /* Crimson/Orange Alert Accent */
+            --accent-green: #10b981;  /* Emerald Active Status */
+            --text-main: #f1f5f9;     /* Off-White text */
+            --text-muted: #94a3b8;    /* Muted Slate text */
+            --border-color: rgba(255, 255, 255, 0.06);
+            --glass-bg: rgba(15, 23, 42, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-lg: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Outfit', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--dark-bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 229, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 77, 36, 0.04) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* HEADER */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2.5rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-circle {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--electric-blue), var(--accent-red));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+        }
+
+        .logo-title {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo-title span {
+            color: var(--electric-blue);
+        }
+
+        .server-status {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--dark-card);
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-red);
+            box-shadow: 0 0 8px var(--accent-red);
+            transition: var(--transition);
+        }
+
+        .status-dot.online {
+            background-color: var(--accent-green);
+            box-shadow: 0 0 8px var(--accent-green);
+        }
+
+        /* KPI METRICS SECTION */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .kpi-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 1.8rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--electric-blue);
+        }
+
+        .kpi-card.alert::before {
+            background: var(--accent-red);
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 229, 255, 0.25);
+        }
+
+        .kpi-info h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .kpi-icon {
+            font-size: 2.2rem;
+            color: var(--electric-blue);
+            opacity: 0.8;
+        }
+
+        .kpi-card.alert .kpi-icon {
+            color: var(--accent-red);
+        }
+
+        /* CONTROLS (SEARCH & FILTERS) */
+        .controls-bar {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 1.2rem;
+            margin-bottom: 1.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-main);
+            outline: none;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--electric-blue);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.1);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .filter-select {
+            padding: 0.8rem 1.2rem;
+            background: var(--dark-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-main);
+            outline: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-select:focus {
+            border-color: var(--electric-blue);
+        }
+
+        /* REFRESH BUTTON */
+        .btn-refresh {
+            background: linear-gradient(135deg, var(--electric-blue) 0%, #0091ff 100%);
+            color: #030712;
+            font-weight: 700;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .btn-refresh:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+        }
+
+        /* DATA TABLE CONTAINER */
+        .table-container {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: rgba(15, 23, 42, 0.8);
+            color: var(--text-main);
+            font-weight: 600;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 2px solid var(--glass-border);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        td {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        tr {
+            transition: var(--transition);
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge-destination {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--electric-blue);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .badge-package {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e2e8f0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .badge-guests {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            padding: 0.2rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-payment {
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: 1px solid transparent;
+        }
+
+        .badge-payment.cash-pay {
+            background: rgba(234, 179, 8, 0.1);
+            color: #facc15;
+            border-color: rgba(234, 179, 8, 0.2);
+        }
+
+        .badge-payment.online-pay {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--electric-blue);
+            border-color: rgba(0, 229, 255, 0.25);
+        }
+
+        .badge-payment.phonepe-pay {
+            background: rgba(147, 51, 234, 0.1);
+            color: #a855f7;
+            border-color: rgba(147, 51, 234, 0.25);
+        }
+
+        .btn-cancel {
+            background: rgba(255, 77, 36, 0.1);
+            color: var(--accent-red);
+            border: 1px solid rgba(255, 77, 36, 0.25);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: var(--transition);
+        }
+
+        .btn-cancel:hover {
+            background: var(--accent-red);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(255, 77, 36, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* LOADING & EMPTY STATES */
+        .spinner-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 5rem 0;
+            gap: 1rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--electric-blue);
+            border-radius: 50%;
+            animation: spin 1s infinite linear;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-wrapper {
+            text-align: center;
+            padding: 5rem 0;
+            color: var(--text-muted);
+        }
+
+        .empty-wrapper i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-red);
+            opacity: 0.5;
+        }
+
+        .empty-wrapper h4 {
+            font-size: 1.4rem;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        /* MODAL POPUP */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 7, 18, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .confirm-modal {
+            background: var(--dark-card);
+            border: 1px solid var(--accent-red);
+            border-radius: 20px;
+            padding: 2.2rem;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(255, 77, 36, 0.15);
+            transform: scale(0.9);
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active .confirm-modal {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            font-size: 3rem;
+            color: var(--accent-red);
+            margin-bottom: 1.2rem;
+            animation: float 2s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .confirm-modal h3 {
+            font-family: var(--font-heading);
+            font-size: 1.6rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .confirm-modal p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn-modal {
+            padding: 0.8rem 1.8rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+
+        .btn-modal-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-modal-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-modal-delete {
+            background: var(--accent-red);
+            color: #ffffff;
+        }
+
+        .btn-modal-delete:hover {
+            box-shadow: 0 4px 15px rgba(255, 77, 36, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* TOAST ALERT SYSTEM */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .toast {
+            background: var(--dark-card);
+            border-left: 4px solid var(--electric-blue);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-main);
+            transform: translateX(120%);
+            animation: slideIn 0.3s forwards ease-out;
+        }
+
+        .toast.success {
+            border-left-color: var(--accent-green);
+        }
+
+        .toast.error {
+            border-left-color: var(--accent-red);
+        }
+
+        @keyframes slideIn {
+            100% { transform: translateX(0); }
+        }
+
+        /* RESPONSIVE LAYOUT */
+        @media (max-width: 768px) {
+            .controls-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-group {
+                flex-direction: column;
+            }
+            th, td {
+                padding: 0.8rem 1rem;
+                font-size: 0.85rem;
+            }
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <div class="logo-area">
+                <div class="logo-circle">
+                    <img src="goroute-logo.jpg" alt="Logo" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                </div>
+                <h1 class="logo-title">GoRoute Holidays <span>Admin Panel</span></h1>
+            </div>
+            
+            <div class="server-status" id="server-status-box">
+                <span class="status-dot" id="server-status-dot"></span>
+                <span id="server-status-text">Connecting Server...</span>
+            </div>
+        </header>
+
+        <!-- KPI SUMMARY CARDS -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-info">
+                    <h3>Total Bookings</h3>
+                    <div class="kpi-value" id="kpi-bookings">0</div>
+                </div>
+                <div class="kpi-icon"><i class="fas fa-receipt"></i></div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-info">
+                    <h3>Total Guests</h3>
+                    <div class="kpi-value" id="kpi-guests">0</div>
+                </div>
+                <div class="kpi-icon"><i class="fas fa-users"></i></div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-info">
+                    <h3>Top Destination</h3>
+                    <div class="kpi-value" id="kpi-top-dest" style="font-size: 1.4rem; padding-top: 0.6rem;">None</div>
+                </div>
+                <div class="kpi-icon"><i class="fas fa-map-marked-alt"></i></div>
+            </div>
+
+            <div class="kpi-card alert">
+                <div class="kpi-info">
+                    <h3>Next Booking Date</h3>
+                    <div class="kpi-value" id="kpi-next-date" style="font-size: 1.4rem; padding-top: 0.6rem;">No Trips</div>
+                </div>
+                <div class="kpi-icon"><i class="fas fa-calendar-day"></i></div>
+            </div>
+        </div>
+
+        <!-- CONTROLS & SEARCH FILTERS -->
+        <div class="controls-bar">
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-bar" class="search-input" placeholder="Search bookings by customer name or destination...">
+            </div>
+
+            <div class="filter-group">
+                <select id="filter-destination" class="filter-select">
+                    <option value="">All Destinations</option>
+                    <option value="Agra">Agra</option>
+                    <option value="Jaipur">Jaipur</option>
+                    <option value="Kerala">Kerala</option>
+                    <option value="Srinagar">Srinagar</option>
+                    <option value="Goa">Goa</option>
+                    <option value="Leh">Leh</option>
+                    <option value="Kodaikanal">Kodaikanal</option>
+                    <option value="Ooty">Ooty</option>
+                </select>
+
+                <select id="filter-package" class="filter-select">
+                    <option value="">All Packages</option>
+                    <option value="hills">Romantic Hills</option>
+                    <option value="family">Premium Family</option>
+                    <option value="wedding">Marriage & Group</option>
+                    <option value="adventure">Adventure</option>
+                    <option value="weekend">Weekend Escape</option>
+                </select>
+
+                <button class="btn-refresh" onclick="fetchBookings()">
+                    <i class="fas fa-sync-alt"></i> Refresh Data
+                </button>
+            </div>
+        </div>
+
+        <!-- DATA TABLE -->
+        <div class="table-container">
+            <table id="bookings-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer Name</th>
+                        <th>Destination</th>
+                        <th>Package Type</th>
+                        <th>Travel Date</th>
+                        <th>Guests</th>
+                        <th>Payment Option</th>
+                        <th>Booking Time</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Dynamic Rows added by JS -->
+                </tbody>
+            </table>
+
+            <!-- Loader Spinner -->
+            <div id="table-loader" class="spinner-wrapper">
+                <div class="spinner"></div>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Fetching live database details...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="table-empty" class="empty-wrapper" style="display: none;">
+                <i class="fas fa-folder-open"></i>
+                <h4>No Bookings Found!</h4>
+                <p>There are no client details in the MySQL database matching this filter.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CANCELLATION MODAL -->
+    <div class="modal-overlay" id="confirm-modal-overlay">
+        <div class="confirm-modal">
+            <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <h3>Cancel Booking Request?</h3>
+            <p>Macha, are you sure you want to cancel this booking? This will delete the entry from the MySQL database permanently.</p>
+            <div class="modal-actions">
+                <button class="btn-modal btn-modal-cancel" id="btn-close-modal">No, Keep It</button>
+                <button class="btn-modal btn-modal-delete" id="btn-confirm-delete">Yes, Cancel It</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST ALERT WRAPPER -->
+    <div class="toast-container" id="toast-wrapper"></div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:5000/api';
+        let allBookings = [];
+        let bookingIdToDelete = null;
+
+        // Code Maps to show nice values
+        const DEST_MAP = {
+            'agra': 'Agra (Taj Mahal)',
+            'jaipur': 'Jaipur (Pink City)',
+            'kerala': 'Kerala Backwaters',
+            'srinagar': 'Srinagar (Kashmir)',
+            'goa': 'Goa Coastlines',
+            'leh': 'Leh Ladakh',
+            'kodaikanal': 'Kodaikanal (TN)',
+            'ooty': 'Ooty (TN)',
+            'yercaud': 'Yercaud (TN)',
+            'coonoor': 'Coonoor (TN)',
+            'kanyakumari': 'Kanyakumari (TN)',
+            'mahabalipuram': 'Mahabalipuram (TN)',
+            'madurai': 'Madurai (TN)',
+            'rameswaram': 'Rameswaram (TN)',
+            'thanjavur': 'Thanjavur (TN)',
+            'hogenakkal': 'Hogenakkal (TN)',
+            'yelagiri': 'Yelagiri (TN)'
+        };
+
+        const PACKAGE_MAP = {
+            'hills': 'Romantic Hills (Honeymoon)',
+            'family': 'Premium Family Retreat',
+            'wedding': 'Marriage & Group Tours',
+            'adventure': 'Forest Trails & Adventure',
+            'weekend': 'Quick Weekend Escapes'
+        };
+
+        // Initialize and check status
+        window.addEventListener('DOMContentLoaded', () => {
+            checkServerStatus();
+            fetchBookings();
+            
+            // Register input events for instant filters
+            document.getElementById('search-bar').addEventListener('input', applyFilters);
+            document.getElementById('filter-destination').addEventListener('change', applyFilters);
+            document.getElementById('filter-package').addEventListener('change', applyFilters);
+
+            // Modal closers
+            document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+            document.getElementById('confirm-modal-overlay').addEventListener('click', (e) => {
+                if (e.target.id === 'confirm-modal-overlay') closeModal();
+            });
+
+            // Action delete button
+            document.getElementById('btn-confirm-delete').addEventListener('click', deleteBookingRequest);
+        });
+
+        // 1. Check Server Connection status
+        function checkServerStatus() {
+            const statusDot = document.getElementById('server-status-dot');
+            const statusText = document.getElementById('server-status-text');
+            
+            fetch(`${API_URL}/health`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'running') {
+                        statusDot.classList.add('online');
+                        statusText.textContent = "Server Online";
+                        statusText.style.color = "var(--accent-green)";
+                    }
+                })
+                .catch(err => {
+                    statusDot.classList.remove('online');
+                    statusText.textContent = "Server Offline";
+                    statusText.style.color = "var(--accent-red)";
+                    showToast("Macha! Python Flask server runs port 5000 run aagudha check pannunga!", "error");
+                });
+        }
+
+        // 2. Fetch all bookings from backend MySQL
+        function fetchBookings() {
+            const tbody = document.getElementById('table-body');
+            const loader = document.getElementById('table-loader');
+            const emptyState = document.getElementById('table-empty');
+
+            loader.style.display = 'flex';
+            emptyState.style.display = 'none';
+            tbody.innerHTML = '';
+
+            fetch(`${API_URL}/bookings`)
+                .then(res => {
+                    if (!res.ok) {
+                        return res.json()
+                            .catch(() => ({ message: 'HTTP status error ' + res.status }))
+                            .then(errData => {
+                                throw new Error(errData.message || 'HTTP status error ' + res.status);
+                            });
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    loader.style.display = 'none';
+                    if (data.status === 'success') {
+                        allBookings = data.bookings;
+                        renderTable(allBookings);
+                        updateKPIs(allBookings);
+                    } else {
+                        showToast('Error: ' + data.message, 'error');
+                    }
+                })
+                .catch(err => {
+                    loader.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    console.error('Failed to get database entries:', err);
+                    showToast('Error details: ' + err.message, 'error');
+                });
+        }
+
+        // 3. Render Table
+        function renderTable(bookings) {
+            const tbody = document.getElementById('table-body');
+            const emptyState = document.getElementById('table-empty');
+            tbody.innerHTML = '';
+
+            if (bookings.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            bookings.forEach(b => {
+                const tr = document.createElement('tr');
+                
+                // Format details
+                const destinationName = DEST_MAP[b.destination.toLowerCase()] || b.destination;
+                const packageName = PACKAGE_MAP[b.package_type.toLowerCase()] || b.package_type;
+                const dateStr = b.travel_date; // Already YYYY-MM-DD string from server
+                const bookingTime = b.created_at || 'N/A';
+                const paymentMethod = b.payment_method || 'Cash';
+
+                let paymentBadge = '';
+                if (paymentMethod.toLowerCase() === 'google pay') {
+                    paymentBadge = `<span class="badge-payment online-pay"><i class="fab fa-google-pay" style="font-size: 1.1rem;"></i> GPay</span>`;
+                } else if (paymentMethod.toLowerCase() === 'phonepe') {
+                    paymentBadge = `<span class="badge-payment phonepe-pay"><i class="fas fa-mobile-alt"></i> PhonePe</span>`;
+                } else if (paymentMethod.toLowerCase() === 'online pay') {
+                    paymentBadge = `<span class="badge-payment online-pay"><i class="fas fa-credit-card"></i> Online Pay</span>`;
+                } else {
+                    paymentBadge = `<span class="badge-payment cash-pay"><i class="fas fa-money-bill-wave"></i> Cash</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td><strong>#${b.id}</strong></td>
+                    <td style="font-weight:600; color: #ffffff;">${escapeHtml(b.name)}</td>
+                    <td><span class="badge-destination">${escapeHtml(destinationName)}</span></td>
+                    <td><span class="badge-package">${escapeHtml(packageName)}</span></td>
+                    <td><i class="far fa-calendar-alt" style="margin-right: 0.4rem; color: var(--electric-blue);"></i>${dateStr}</td>
+                    <td><span class="badge-guests">${b.guests} Pers</span></td>
+                    <td>${paymentBadge}</td>
+                    <td style="color: var(--text-muted); font-size: 0.85rem;">${bookingTime}</td>
+                    <td>
+                        <button class="btn-cancel" onclick="openCancelModal(${b.id})">
+                            <i class="fas fa-trash-alt"></i> Cancel
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 4. Update KPIs
+        function updateKPIs(bookings) {
+            document.getElementById('kpi-bookings').textContent = bookings.length;
+            
+            // Total Guests
+            const totalGuests = bookings.reduce((sum, b) => sum + parseInt(b.guests || 0, 10), 0);
+            document.getElementById('kpi-guests').textContent = totalGuests;
+
+            if (bookings.length === 0) {
+                document.getElementById('kpi-top-dest').textContent = 'None';
+                document.getElementById('kpi-next-date').textContent = 'No Trips';
+                return;
+            }
+
+            // Top Destination
+            const destCounts = {};
+            bookings.forEach(b => {
+                const dest = DEST_MAP[b.destination.toLowerCase()] || b.destination;
+                destCounts[dest] = (destCounts[dest] || 0) + 1;
+            });
+            let topDest = 'None';
+            let maxCount = 0;
+            for (const d in destCounts) {
+                if (destCounts[d] > maxCount) {
+                    maxCount = destCounts[d];
+                    topDest = d;
+                }
+            }
+            // Shorten name if too long
+            if (topDest.includes('(')) {
+                topDest = topDest.split(' ')[0];
+            }
+            document.getElementById('kpi-top-dest').textContent = topDest;
+
+            // Next Booking Date
+            const today = new Date().toISOString().split('T')[0];
+            const futureTrips = bookings
+                .filter(b => b.travel_date >= today)
+                .sort((x, y) => x.travel_date.localeCompare(y.travel_date));
+            
+            if (futureTrips.length > 0) {
+                const nextDate = futureTrips[0].travel_date;
+                document.getElementById('kpi-next-date').textContent = nextDate;
+            } else {
+                document.getElementById('kpi-next-date').textContent = 'Completed';
+            }
+        }
+
+        // 5. Filters Logic
+        function applyFilters() {
+            const query = document.getElementById('search-bar').value.toLowerCase().trim();
+            const destFilter = document.getElementById('filter-destination').value.toLowerCase();
+            const packageFilter = document.getElementById('filter-package').value.toLowerCase();
+
+            const filtered = allBookings.filter(b => {
+                const destMapped = (DEST_MAP[b.destination.toLowerCase()] || b.destination).toLowerCase();
+                const nameMatch = b.name.toLowerCase().includes(query) || destMapped.includes(query);
+                
+                const destinationMatch = !destFilter || b.destination.toLowerCase().includes(destFilter) || destMapped.includes(destFilter);
+                const packageMatch = !packageFilter || b.package_type.toLowerCase() === packageFilter;
+
+                return nameMatch && destinationMatch && packageMatch;
+            });
+
+            renderTable(filtered);
+        }
+
+        // 6. Delete Handlers
+        function openCancelModal(id) {
+            bookingIdToDelete = id;
+            document.getElementById('confirm-modal-overlay').classList.add('active');
+        }
+
+        function closeModal() {
+            bookingIdToDelete = null;
+            document.getElementById('confirm-modal-overlay').classList.remove('active');
+        }
+
+        function deleteBookingRequest() {
+            if (!bookingIdToDelete) return;
+
+            fetch(`${API_URL}/bookings/${bookingIdToDelete}`, {
+                method: 'DELETE'
+            })
+            .then(res => res.json())
+            .then(data => {
+                closeModal();
+                if (data.status === 'success') {
+                    showToast('Booking cancelled/deleted successfully, macha!', 'success');
+                    fetchBookings(); // Reload data
+                } else {
+                    showToast('Error cancelling booking: ' + data.message, 'error');
+                }
+            })
+            .catch(err => {
+                closeModal();
+                console.error(err);
+                showToast('Failed to connect to backend for deletion.', 'error');
+            });
+        }
+
+        // Helpers
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-wrapper');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = '<i class="fas fa-check-circle"></i>';
+            if (type === 'error') {
+                icon = '<i class="fas fa-exclamation-circle"></i>';
+            }
+            
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s forwards ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
